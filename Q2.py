@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.functions import col, count, sum, round, row_number, year, lit, to_timestamp, when
 from pyspark.sql.window import Window
+from datetime import datetime
 #------------------Q2 RDD Implementation----------------------#
 
 print("RDD STARTED")
@@ -21,7 +22,8 @@ crime_1 = spark.read.option("header", "true").csv(input_dir + "LA_Crime_Data_201
 crime_2 = spark.read.option("header", "true").csv(input_dir + "LA_Crime_Data_2020_2025.csv").rdd
 
 def extract_year_area(x):
-    y = year(col("DATE OCC"))
+    date_str = x['DATE OCC']
+    y = datetime.strptime(date_str, "%m/%d/%Y %I:%M:%S %p").year
     return ((y, x['AREA NAME']), 1)
 
 def is_closed_case(x):
@@ -54,7 +56,7 @@ print("RDD RESULT")
 for row in final_result.coalesce(1).collect():
     print(f"Έτος: {row[0]}, Τμήμα: {row[2]}, Ποσοστό: {row[3]}%, Ranking: {row[1]}")
 
-final_rdd.coalesce(1).saveAsTextFile(output_dir)
+final_result.coalesce(1).saveAsTextFile(output_dir)
 
 #------------------Q2 DataFrame Implementation----------------------#
 '''
