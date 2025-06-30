@@ -57,4 +57,3 @@ final_rdd.coalesce(1).saveAsTextFile(output_dir)
 
 for row in final_result.collect():
     print(f"Έτος: {row[0]}, Τμήμα: {row[2]}, Ποσοστό: {row[3]}%, Ranking: {row[1]}")
-'''
